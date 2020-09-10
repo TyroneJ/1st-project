@@ -5,6 +5,9 @@
 #include "kage2dutil/imgui.h"
 #include "kage2dutil/imgui-SFML.h"
 
+bool App::m_running = false;
+bool App::iskeyReleased = false;
+
 App::App()
 {
 }
@@ -64,20 +67,34 @@ void App::run()
 		return;
 	}
 
+
 	while (m_window.isOpen() && m_running)
 	{
-		// Events are things such as keys being pressed, the window closing, etc.
-		// There could be several events waiting for us, so use a loop to process them all.
-		sf::Event event;
-		while (m_window.pollEvent(event))
-		{
-			ImGui::SFML::ProcessEvent(event);
-			if (event.type == sf::Event::Closed)
+		//iskeyPressed = false;
+
+			sf::Event event;
+			while (m_window.pollEvent(event))
 			{
-				m_window.close();
-				break;
+
+				ImGui::SFML::ProcessEvent(event);
+				if (event.type == sf::Event::Closed)
+				{
+					m_window.close();
+					break;
+				}
+
+				if (event.type == sf::Event::KeyPressed)
+				{
+					iskeyReleased = false;
+				}
+
+				if (event.type == sf::Event::KeyReleased)
+				{
+					iskeyReleased = true;
+				}
+
 			}
-		}
+
 		sf::Time deltaT_sfml = m_clock.restart();
 		float deltaT = deltaT_sfml.asSeconds();
 		ImGui::SFML::Update(m_window, deltaT_sfml);

@@ -22,9 +22,10 @@ protected:
 	sf::RenderWindow m_window;
 	sf::Clock m_clock;
 	sf::Font m_font;
-	bool m_running;
 
 public:
+	static bool m_running;
+
 	App();
 	virtual ~App();
 	virtual bool init();
@@ -33,6 +34,8 @@ public:
 	virtual void render();
 	virtual void run();
 	virtual void cleanup();
+
+	static bool iskeyReleased;
 
 	sf::RenderWindow &getWindow();
 	sf::Clock &getClock();

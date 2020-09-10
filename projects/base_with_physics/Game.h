@@ -2,18 +2,18 @@
 
 #include "app.h"
 #include "kage2dutil/physics.h"
-#include "rabbit.h"
+#include "Scene.h"
 
-class Example : public App
+class Game : public	Scene
 {
+
 public:
-	Example();
-	virtual ~Example();
+
+	Game();
+	virtual ~Game();
 	virtual bool start();
 	virtual void update(float deltaT);
 	virtual void render();
 	virtual void cleanup();
-	static Example &inst();
-
-	sf::Sprite *m_backgroundSprite;
+	static Game &inst();
 };
