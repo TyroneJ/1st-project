@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 
+using namespace std;
 
 Example::Example(): App()
 {
@@ -29,7 +30,7 @@ bool Example::start()
 	water.m_texture = kage::TextureManager::getTexture("data/water.png");
 
 
-
+	currentPressedTile = grass.id, rock.id, water.id;
 
 	//sf::Vector2u resolution = m_catSprite->getTexture()->getSize();
 	//m_catSprite->setScale(float(m_window.getSize().x) / resolution.x, float(m_window.getSize().y) / resolution.y);
@@ -62,7 +63,7 @@ bool Example::start()
 	for (size_t i = 1; i < CELL_TOTAL_COUNT; i++)
 	{
 
-		switch (map[i])
+		switch (mapFromFile[i])
 		{
 		
 		case 1:
@@ -87,19 +88,10 @@ bool Example::start()
 
 
 
-
-	// basic file operations
-
-		std::ofstream myfile;
-		myfile.open("map.txt");
-		myfile << "[map]\n";
-		myfile.close();
+	// basic file operations, saving
 	
 
-
-
-
-
+		
 
 
 	return true;
@@ -113,21 +105,93 @@ void Example::update(float deltaT)
 	}
 
 	sf::Vector2f mousePosition = (sf::Vector2f)sf::Mouse::getPosition(m_window);
-
+	
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 	{
 		int x =  mousePosition.x / CELL_WIDTH;
 		int y = mousePosition.y / CELL_HEIGHT;
-		std::cout << " x " << x << " y " << y << std::endl;
+		//std::cout << " x " << x << " y " << y << std::endl;
+		int i = CELL_TOTAL_COUNT;
+
+		if (x >= 0 && x < CELL_COUNT_X)
+		{
+			if (y >= 0 && y < CELL_COUNT_Y)
+			{
+				int index = x + y * CELL_COUNT_X;
+
+				mapFromFile[i] = currentPressedTile;
+				tiles[index].setTexture(*m_currentTile.getTexture());
+				std::cout << index << endl; 
+			}
+		}
+		
+	}
+	ImGui::Begin("Kage2D");
+
+	if (ImGui::Button("save"))
+	{
+		std::ofstream myfile;
+		myfile.open("map.txt");
+
+		for (size_t y = 0; y < CELL_COUNT_Y; y++)
+		{
+			for (size_t x = 0; x < CELL_COUNT_X; x++)
+			{
+				int i = x + y * CELL_COUNT_X;
+
+				myfile << mapFromFile[i] << std::endl;
+			}
+		}
+		myfile.close();
+
+	}
+	if (ImGui::Button("Load"))
+	{
+		std::string line;
+		std::ifstream file("map.txt");
+		int index = 0;
+
+		if (file.is_open())
+		{
 
 
-		tiles[x + y * CELL_COUNT_X].setTexture(*m_currentTile.getTexture());
+			while (getline(file, line))
+			{
+				int elementOne = std::stoi(line);
+				mapFromFile[index] = elementOne;
+
+				index++;
+			}
+			file.close();
+		}
+
+		else
+			std::cout << "Unable to open file";
+
+
+		std::cout << std::endl << "MAP FROM FILE " << std::endl;
+		for (size_t y = 0; y < CELL_COUNT_Y; y++)
+		{
+			for (size_t x = 0; x < CELL_COUNT_X; x++)
+			{
+				int i = x + y * CELL_COUNT_X;
+
+				std::cout << mapFromFile[i] << ", ";
+			}
+			std::cout << std::endl;
+		}
+
 	}
 
+	ImGui::End();
+
+
+	
 
 	//std::cout << mousePosition.x << " " << mousePosition.y << std::endl;
 
 	m_currentTile.setPosition(mousePosition);
+
 
 	
 	ImGui::Begin("Kage2D");

@@ -113,6 +113,7 @@ void MainMenu::update(float deltaT)
 		{
 			SceneManager::Run(1);
 		}
+		
 		ImGui::End();
 	}
 }
